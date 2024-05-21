@@ -1,0 +1,206 @@
+{% extends "./layout.html" %}
+
+{% block titulo %}
+Actividades
+{% endblock %}
+
+
+{% block estilos %}
+<style>
+    /* Estilos para la lista de grupos */
+    .grupo-item {
+        margin-bottom: 20px;
+    }
+
+    .grupo-item .button {
+        background-color: #3399ff;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .grupo-item .button:hover {
+        background-color: seagreen;
+    }
+
+    /* Estilos para el modal */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+        padding-top: 60px;
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 500px;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+    }
+
+    .form-modal input[type="text"]:focus {
+        outline: none;
+        border-color: seagreen;
+    }
+
+    /* Estilos para el formulario dentro del modal */
+    .form-modal input[type="text"],
+    .form-modal button[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid black;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    .form-modal button[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .form-modal button[type="submit"]:hover {
+        background-color: black;
+    }
+</style>
+
+{% endblock %}
+
+
+{% block contenido %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="content text-center">
+                <div class="home ">
+                    <br>
+                    <h2 class="titulo fw-bold text-success">ACTIVIDADES DE HORTICULTURA</h2>
+                    <p class="lead text-body-emphasis text-start">La horticultura terapéutica, más allá de ser una simple actividad
+                        de jardinería, se ha convertido en una herramienta poderosa para promover el bienestar físico,
+                        mental y social de las personas.</p>
+                    <p class="lead text-body-emphasis text-start">A través del cuidado de plantas, flores y hortalizas en un
+                        ambiente natural, la horticultura terapéutica ofrece una amplia gama de beneficios que impactan
+                        positivamente en diversos aspectos de la vida, especialmente en poblaciones con necesidades
+                        particulares.</p>
+                        <h2 class=" titulo fw-bold text-success text-center py-3">METODOLOGÍA
+                            CAMPO DE
+                            APRENDIZAJE</h2>
+                        <p class="lead text-body-emphasis text-start">La tecnología es fundamento en el MEDIT, ya que, a través de ella, la
+                            especie humana del siglo 21 puede apreciar, comprender y crear valor
+                            de forma personal y en respuesta a su contexto.</p>
+                        <p class="lead text-body-emphasis text-start">La realidad, desde la perspectiva del campo multidimensional de
+                            aprendizaje es aprehendida desde la persona, el aula, la cultura, la familia, la naturaleza, la institución
+                            y la sociedad.</p>
+                        <p class="lead text-body-emphasis text-start">Teniendo en cuenta estos planteamientos, la Metodología Campo de 
+                            Aprendizaje propone una ruta concurrente de nueve fases, que comienza con la planeación y termina con el logro del aprendizaje, apreciada en 
+                            la siguiente figura:</p>
+                
+                        <img src="{{ url_for('static', filename='imagenes/campo.png') }}" alt="Imagen de la Universidad de Cundinamarca"
+                            class="img-fluid text-center">
+                </div>
+                <br>
+                <div class="courses bg-body-secondary">
+                    <h2 class="fw-bold titulo text-success">CREACIÓN DE ACTIVIDADES</h2>
+                    <p class="lead text-body-emphasis">La creación de actividades educativas es un aspecto fundamental
+                        del proceso de enseñanza-aprendizaje, donde los docentes diseñan y estructuran tareas
+                        específicas con el propósito de promover el desarrollo de habilidades, la comprensión de
+                        conceptos y el logro de objetivos educativos.</p>
+                    
+                    <div class="courses  text-start">
+                        <br>
+                        <h2 class="fw-bold titulo text-success">Lista de grupos</h2>
+                        <hr>
+                        <div class="row text-center  ">
+                            {% for grupo in grupos %}
+                            <div class="col-md-4 grupo-item border-4 border-black">
+                                <h3 class="fw-bold">{{ grupo.nombre }}</h3>
+                                <p>{{ grupo.descripcion }}</p>
+                                <button class="button btn-success btn-outline-warning" onclick="mostrarModal('{{ grupo.id }}')">Asignar
+                                    Actividad</button>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+{% for grupo in grupos %}
+<div id="modal-{{ grupo.id }}" class="modal">
+    <div class="modal-content">
+        <span class="close text-end" onclick="cerrarModal('{{ grupo.id }}')">&times;</span>
+        <div class="bg-light-subtle">
+            <h2 class="fw-bold text-success ">Crear actividad para {{ grupo.nombre }}</h2>
+        </div>
+
+        <form id="form-{{ grupo.id }}" class="form-modal py-2"
+            action="{{ url_for('crear_actividad', grupo_id=grupo.id) }}" method="post">
+            <input type="text" name="nombre_actividad" placeholder="Nombre de la Actividad" class="form-control"
+                style="max-width: 100%; overflow-x: auto;">
+            <textarea name="plan_aprendizaje" placeholder="Planeación Plan de aprendizaje digital" class="form-control"
+                style="max-width: 100%; min-height: 100px; overflow-x: auto;"></textarea>
+            <textarea name="socializacion_previa" placeholder="Socialización previa del contenido" class="form-control"
+                style="max-width: 100%; min-height: 100px; overflow-x: auto;"></textarea>
+            <textarea name="integracion_tecnologica" placeholder="Integración tecnológica" class="form-control"
+                style="max-width: 100%; min-height: 100px; overflow-x: auto;"></textarea>
+            <textarea name="participacion" placeholder="Participación" class="form-control"
+                style="max-width: 100%; min-height: 100px; overflow-x: auto;"></textarea>
+            <textarea name="trabajo_colaborativo" placeholder="Trabajo colaborativo y creativo" class="form-control"
+                style="max-width: 100%; min-height: 100px; overflow-x: auto;"></textarea>
+            <textarea name="logro_aprendizaje" placeholder="Logro de aprendizaje" class="form-control"
+                style="max-width: 100%; min-height: 100px; overflow-x: auto;"></textarea>
+            <button type="submit" class="btn btn-primary">Crear Actividad</button>
+        </form>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block js %}
+<script>
+    // Función para mostrar el modal
+    function mostrarModal(grupoId) {
+        var modal = document.getElementById('modal-' + grupoId);
+        modal.style.display = "block";
+    }
+
+    // Función para cerrar el modal
+    function cerrarModal(grupoId) {
+        var modal = document.getElementById('modal-' + grupoId);
+        modal.style.display = "none";
+    }
+</script>
+{% endblock %}

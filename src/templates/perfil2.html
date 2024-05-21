@@ -1,0 +1,87 @@
+{% extends "./layout2.html" %}
+
+{% block titulo %}
+Perfil2
+{% endblock %}
+
+{% block estilos %}
+<style>
+    .profile-image {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 50%;
+        /* Para hacer la imagen redonda */
+        border: 5px solid gray;
+        /* Borde blanco alrededor de la imagen */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        /* Sombra suave */
+        transition: transform 0.3s ease;
+        /* Animación de escala al pasar el cursor */
+    }
+
+    .profile-image:hover {
+        transform: scale(1.12);
+        /* Escala aumentada al pasar el cursor */
+    }
+
+    .upload-btn {
+        background-color: seagreen;
+        color: white;
+        /* Color del texto */
+        padding: 10px 20px;
+        /* Espacio interno */
+        border: none;
+        /* Sin borde */
+        border-radius: 5px;
+        /* Bordes redondeados */
+        cursor: pointer;
+        /* Cambia el cursor al pasar por encima */
+        transition: background-color 0.3s ease;
+        /* Animación de color de fondo */
+    }
+
+    .upload-btn:hover {
+        background-color: black;
+        /* Cambia el color de fondo al pasar el cursor */
+    }
+
+    .file-name {
+        font-size: 14px;
+        /* Tamaño de fuente */
+        margin-top: 5px;
+        /* Espacio superior */
+        color: black;
+        /* Color de texto */
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid text-center bg-body-secondary py-5">
+    <h1 class="text-success fw-bold">Perfil</h1>
+    <h3 class="lead text-body-emphasis">{{ email }}</h3>
+    <br>
+    {% if image_url %}
+    <img src="{{ image_url }}" alt="Imagen" class="profile-image">
+    {% endif %}
+    <br>
+    <br>
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('perfil2') }}">
+        <label for="image" class="upload-btn">Seleccionar Imagen</label>
+        <input type="file" id="image" name="image" accept="image/*" style="display: none;" required
+            onchange="showFileName(this)">
+        <span id="file-selected" class="file-name"></span>
+        <button type="submit" class="upload-btn">Cargar Imagen</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    function showFileName(input) {
+        var fileName = input.files[0].name;
+        document.getElementById("file-selected").innerHTML = fileName;
+    }
+</script>
+{% endblock %}

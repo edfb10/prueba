@@ -1,0 +1,81 @@
+{% extends "./layout2.html" %}
+
+{% block titulo %}
+Actividades 2
+{% endblock %}
+
+{% block estilos %}
+<style>
+    .grupo {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .grupo h3 {
+        font-weight: bold;
+        margin-top: 0;
+    }
+
+    .grupo p {
+        margin: 5px 0;
+    }
+
+    .grupo input[type="text"],
+    .grupo textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .grupo button[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .grupo button[type="submit"]:hover {
+        background-color: #45a049;
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="content t">
+                <div>
+                    <h2 class="fw-bold text-center text-success py-4">Actividades del Grupo</h2>
+                </div>
+                {% for actividad in actividades %}
+                <div class="grupo bg-dark">
+                    <h3 class="fw-bold text-success">{{ actividad.nombre_actividad }}</h3>
+                    <p class="text-white"><strong>Plan de Aprendizaje:</strong> {{ actividad.plan_aprendizaje }}</p>
+                    <p class="text-white"><strong>Socialización Previa:</strong> {{ actividad.socializacion_previa }}</p>
+                    <p class="text-white"><strong>Integración Tecnológica:</strong> {{ actividad.integracion_tecnologica }}</p>
+                    <p class="text-white"><strong>Participación:</strong> {{ actividad.participacion }}</p>
+                    <p class="text-white"><strong>Trabajo Colaborativo:</strong> {{ actividad.trabajo_colaborativo }}</p>
+                    <p class="text-white"><strong>Logro de Aprendizaje:</strong> {{ actividad.logro_aprendizaje }}</p>
+
+                    <!-- Formulario para enviar respuestas -->
+                    <form action="{{ url_for('agregar_respuesta', profesor_id=actividad.profesor_id, grupo_id=actividad.grupo_id, actividad_id=actividad.id) }}" method="post">
+                        <input type="hidden" name="actividad_id" value="{{ actividad.id }}">
+                        <h3 class="fw-bold text-success py-3">Enviar Respuesta</h3>
+                        <input type="text" name="nombre_estudiante" placeholder="Nombre del Estudiante">
+                        <textarea name="respuesta" placeholder="Respuesta"></textarea>
+                        <button type="submit">Enviar Respuesta</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

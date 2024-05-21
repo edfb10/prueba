@@ -1,0 +1,137 @@
+{% extends "./layout.html" %}
+
+{% block titulo %}
+Estudiantes
+{% endblock %}
+
+{% block estilos %}
+<style>
+    #content-container {
+        max-width: 800px;
+        margin: 0px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilos del formulario */
+    .crear_esgrup {
+        margin-bottom: 30px;
+    }
+
+    form {
+        margin-bottom: 20px;
+        border: 2px solid seagreen;
+        /* Borde sólido */
+        border-radius: 10px;
+        /* Borde redondeado */
+        padding: 20px;
+        /* Espaciado interno */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        /* Sombra */
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus {
+        outline: none;
+        border-color: seagreen;
+    }
+
+    .boton {
+        padding: 10px 20px;
+        background-color: seagreen;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .boton:hover {
+        background-color: black;
+    }
+
+    /* Estilos de la lista de estudiantes */
+    .lista-estudiantes {
+        list-style: none;
+        padding: 0;
+    }
+
+    .lista-estudiantes li {
+        margin-bottom: 10px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .lista-estudiantes li:hover {
+        transform: scale(1.02);
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+<div id="content-container">
+    <h2 class="text-center fw-bold text-success">CREACIÓN DE GRUPOS </h2>
+    <p class="lead text-body-emphasis">En nuestro ambiente virtual, los docentes pueden crear grupos y asignar
+        estudiantes para facilitar la organización del aprendizaje y fomentar la interacción entre los participantes.
+        Los pasos clave incluyen la creación del grupo, donde se proporcionan detalles básicos como el nombre del grupo
+        seguido de la asignación de estudiantes al grupo a través de su dirección de correo electrónico. Este proceso se
+        hace para asignar a los estudiantes recordando que el nombre del grupo debe ser el mismo si se asignan varios
+        estudiantes al mismo grupo. Una vez asignados, los estudiantes tienen acceso a este grupo. </p>
+    <div class="crear_esgrup">
+        <form method="POST" action="{{url_for('estudiantes')}}" id="crear-grupo-form">
+            <h3 class="text-success fw-bold">Crear grupo </h3>
+            <div class="form-group">
+                <input type="text" placeholder="Nombre del Grupo" class="form-control" name="nombre_g">
+            </div>
+            <h3 class="text-success fw-bold">Asignar estudiante</h3>
+            <div class="form-group">
+                <input type="email" placeholder="Correo del Estudiante" class="form-control" name="email2">
+            </div>
+            <button type="submit" class="boton btn btn-success">Crear Grupo</button>
+        </form>
+    </div>
+    <hr>
+    <div>
+        <h1 class="text-success fw-bold">Estudiantes agregados</h1>
+        <ul class="lista-estudiantes">
+            {% for estu in estudiantes %}
+            <li>Correo: {{ estu.user }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('crear-grupo-form');
+
+        form.addEventListener('submit', function (event) {
+            const emailInput = document.querySelector('input[name="email2"]');
+            const email = emailInput.value.trim();
+
+            if (!email.endsWith('@ucundinamarca.edu.co')) {
+                alert('Por favor, ingrese un correo electrónico con el dominio @ucundinamarca.edu.co');
+                event.preventDefault(); // Evita que el formulario se envíe
+            }
+        });
+    });
+</script>
+{% endblock %}

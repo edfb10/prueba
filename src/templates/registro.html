@@ -1,0 +1,221 @@
+{% extends "./sesion.html" %}
+
+{% block titulo %}
+Registro
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block estilos %}
+<style>
+    .btn {
+        padding: 10px 20px;
+        background-color: #007bff;
+        /* Color de fondo predeterminado */
+        color: #fff;
+        /* Color de texto predeterminado */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        /* Transición de color de fondo */
+    }
+
+    /* Estilos para cambiar el color de fondo al pasar el cursor */
+    .btn:hover {
+        background-color: #fff;
+        /* Cambiar a blanco cuando se pasa el cursor */
+        color: #007bff;
+        /* Cambiar el color de texto a azul */
+    }
+
+    .formulario-borde {
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+    }
+
+    .container {
+        border: 2px solid #ffffff;
+        /* Borde blanco de 2px */
+        border-radius: 10px;
+        padding: 20px;
+        background-color: rgba(0, 0, 0, 0.6);
+        /* Fondo semi-transparente */
+        color: #fff;
+        /* Texto blanco */
+        max-width: 400px;
+        width: 100%;
+    }
+
+    .formulario {
+        width: 100%;
+        max-width: 400px;
+        /* Ajusta este valor según tus necesidades */
+        border: 1px solid white;
+        padding: 20px;
+    }
+
+    .btn-autenticarse {
+        padding: 10px 20px;
+        background-color: #000;
+        /* Color de fondo gris */
+        color: #fff;
+        /* Color de texto blanco */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        /* Transición de color de fondo */
+    }
+
+    /* Estilos para cambiar el color de fondo al pasar el cursor */
+    .btn-autenticarse:hover {
+        background-color: #fff;
+        /* Cambiar a blanco cuando se pasa el cursor */
+        color: dimgrey;
+        /* Cambiar el color de texto a gris */
+
+    }
+
+    .btn-autenticarse {
+        text-decoration: none;
+    }
+
+    body {
+        background-image: url("{{ url_for('static', filename='imagenes/horticultura.png') }}");
+        object-fit: initial;
+
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+<section class="formulario-borde">
+    <div class="container">
+        {% if error_message %}
+        <div class="alert alert-danger">
+            <br><br>
+            <br>
+            <button type="button" class="btn-close" aria-label="Cerrar" onclick="hideErrorMessage()"></button>
+            <span>{{ error_message }}</span>
+        </div>
+        {% endif %}
+        <form class="formulario mx-auto" action="{{ url_for('registro') }}" method="post"
+            onsubmit="return validarCorreo()">
+            <h2 class="fw-bold text-white">Registro Profesor</h2>
+            <div class="mb-3 py-3">
+                <input type="email" class="form-control form-control-lg" id="email" name="email"
+                    placeholder="Correo Electrónico" required>
+            </div>
+            <div class="mb-3 py-3">
+                <input type="password" class="form-control form-control-lg" id="password" name="password"
+                    placeholder="Contraseña" required>
+            </div>
+            <div class="mb-3 py-3">
+                <input type="password" class="form-control form-control-lg" id="confirmPassword"
+                    name="confirmar_password" placeholder="Confirmar Contraseña" required>
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary w-100 mb-2 form-control-lg fw-bold">Registrarse</button>
+            </div>
+            <hr class="w-100 mb-4 text-white fw-bold">
+            <div class="text-center">
+                <div id="errorFrame" class="alert alert-danger" style="display: none;">
+                    <p id="errorText" class="text-danger">Las contraseñas no coinciden</p>
+                </div>
+                <p class="text-white fw-bold">¿Ya tienes una cuenta?<span class="text-success"></span> <a
+                        href="{{ url_for('inicio_sesion') }}" class="text-success">Iniciar sesión</a></p>
+            </div>
+        </form>
+    </div>
+</section>
+
+
+{% endblock %}
+
+{% block js %}
+<script>
+
+    // Oculta el mensaje de error después de 5 segundos
+    function hideErrorMessage() {
+        document.querySelector('.alert-danger').style.display = 'none';
+    }
+    const formulario = document.getElementById('registroForm');
+    const emailInput = document.querySelector('input[name="email"]');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    formulario.addEventListener('submit', (event) => {
+        // Evita el envío del formulario por defecto
+        event.preventDefault();
+
+        const email = emailInput.value;
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        // Validar el correo electrónico
+        if (!validateEmail(email)) {
+            alert('Por favor, introduce un correo electrónico válido.');
+            emailInput.value = ''; // Restablece el valor del campo de email
+            passwordInput.value = ''; // Restablecer el valor del campo de contraseña
+            confirmPasswordInput.value = ''; // Restablecer el valor del campo de confirmación de contraseña
+            return; // Detener el proceso de envío del formulario
+        }
+
+        // Verificar que el correo electrónico tenga el dominio correcto
+        if (!email.endsWith('@ucundinamarca.edu.co')) {
+            alert('El correo electrónico debe pertenecer al dominio @ucundinamarca.edu.co');
+            emailInput.value = ''; // Restablece el valor del campo de email
+            passwordInput.value = ''; // Restablecer el valor del campo de contraseña
+            confirmPasswordInput.value = ''; // Restablecer el valor del campo de confirmación de contraseña
+            return; // Detener el proceso de envío del formulario
+        }
+
+        // Validar que las contraseñas tengan al menos 8 caracteres
+        if (password.length < 8 || confirmPassword.length < 8) {
+            alert('Las contraseñas deben tener al menos 8 caracteres');
+            passwordInput.value = ''; // Restablecer el valor del campo de contraseña
+            confirmPasswordInput.value = ''; // Restablecer el valor del campo de confirmación de contraseña
+            return; // Detener el proceso de envío del formulario
+        }
+
+        // Validar que las contraseñas sean una combinación de caracteres especiales, letras y números
+        const passwordPattern = /^[^\s]{8,}$/;
+        if (!passwordPattern.test(password) || !passwordPattern.test(confirmPassword)) {
+            alert('Las contraseñas deben contener al menos 8 caracteres y no pueden contener espacios en blanco');
+            passwordInput.value = ''; // Restablecer el valor del campo de contraseña
+            confirmPasswordInput.value = ''; // Restablecer el valor del campo de confirmación de contraseña
+            return; // Detener el proceso de envío del formulario
+        }
+
+        if (password !== confirmPassword) {
+            // Muestra el mensaje de error en un cuadro emergente
+            alert('Las contraseñas no coinciden');
+            passwordInput.value = ''; // Restablecer el valor del campo de contraseña
+            confirmPasswordInput.value = ''; // Restablecer el valor del campo de confirmación de contraseña
+        } else {
+            // Si las contraseñas coinciden, envía el formulario
+            formulario.submit();
+            // Muestra un mensaje de éxito y redirige después de 3 segundos
+            setTimeout(function () {
+                alert('Se agregó la cuenta exitosamente.');
+                window.location.href = "{{ url_for('registro') }}";
+            }, 3000);
+        }
+        formulario.submit();
+        setTimeout(function () {
+            alert('Se agregó la cuenta exitosamente.');
+            window.location.href = "{{ url_for('registro') }}";
+        }, 3000);
+    });
+
+    function validateEmail(email) {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailPattern.test(email);
+    }
+</script>
+
+{% endblock %}

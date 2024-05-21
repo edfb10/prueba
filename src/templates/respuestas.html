@@ -1,0 +1,101 @@
+{% extends "./layout.html" %}
+
+{% block titulo %}
+Respuestas
+{% endblock %}
+
+
+{% block estilos %}
+<style>
+   
+
+    .card {
+        margin-bottom: 10px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        background-color: #3399ff;
+        color: white;
+        padding: 10px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        cursor: pointer;
+        /* Para que el cursor cambie al pasar sobre el botón */
+    }
+
+    .card-body {
+        display: none;
+        /* Oculta el cuerpo del card inicialmente */
+        padding: 20px;
+    }
+
+    .card.open .card-body {
+        display: block;
+        /* Muestra el cuerpo del card cuando tiene la clase 'open' */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th,
+    td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+
+{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid">
+    <h3 class="fw-bold text-success text-center py-3"> RESPUESTA DE ACTIVIDADES PROPUESTAS </h3>
+    <p class="lead text-body-emphasis text-start">En nuestro ambiente virtual, los estudiantes  enviaran sus  respuestas a las actividades asignadas por los docentes para demostrar su comprensión y progreso en el aprendizaje. Los pasos principales incluyen la recepción de una tarea por parte del estudiante, la elaboración de una respuesta adecuada y el envío de esa respuesta a través del sistema.</p>
+    <div class="crear_esgrup">
+    {% for actividad_id, actividad_data in respuestas_por_actividad.items() %}
+    <div class="card">
+        <div class="card-header" onclick="toggleCardBody('{{ actividad_id }}')">
+            Nombre de la actividad: {{ actividad_data.nombre_actividad }}
+        </div>
+        <div class="card-body" id="body-{{ actividad_id }}">
+            <table>
+                <thead class="text-center ">
+                    <tr>
+                        <th>Nombre Estudiante</th>
+                        <th>Respuesta</th>
+                    </tr>
+                </thead>
+                <tbody >
+                    {% for respuesta in actividad_data.respuestas %}
+                    <tr>
+                        <td class="bg-info-subtle">{{ respuesta.nombre_estudiante }}</td>
+                        <td class="bg-info-subtle">{{ respuesta.respuesta }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br>
+    {% endfor %}
+    </div>
+    {% endblock %}
+
+    {% block js %}
+    <script>
+        // JavaScript opcional
+        function toggleCardBody(actividadId) {
+            var body = document.getElementById('body-' + actividadId);
+            body.parentElement.classList.toggle('open');
+        }
+    </script>
+    {% endblock %}
